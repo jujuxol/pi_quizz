@@ -12,7 +12,7 @@ class Main:
         self.window = window
 
         self.Menu = Menu(window.clear, self.quit, self.start)
-        self.Game = Game(window.clear)
+        self.Game = Game(window.clear, self.end)
 
         self.in_menu = True
         self.current_manager = self.Menu
@@ -23,6 +23,8 @@ class Main:
     def start(self):
         self.window.clear()
         self.current_manager = self.Game
+        self.Game.reset()
+        self.Game.cursor_pos = [0, 0]
 
     def end(self):
         self.window.clear()
@@ -31,11 +33,10 @@ class Main:
     def event(self):
         try:
             key = self.window.getkey()
-            
-            if key == "Q":
-                self.run = False
-            else:
-                self.current_manager.move(key)
+            if key == "e":
+                return
+
+            self.current_manager.move(key)
 
             if not self.current_manager.stuck_in_widget:
                 self.current_manager.stuck_in_widget = True

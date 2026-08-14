@@ -16,11 +16,11 @@ class PiQuizz:
         self.end_func = end_func
         self.param = param
 
-        self.PI = "1415926535897932384626433832795028841971693993751059209749445923078164062862089986280348253421170679"
+        self.PI = "1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679"
 
         self.pos = self.param.get("len", [0])[0]
         self.limit = self.param.get("len", (0, None))[1]
-        self.jump = self.param.get("jump", 0)
+        self.jump = self.param.get("jump", 1)
         self.live = self.param.get("live", 3)
 
     def get_previus_digits(self, num_of_digit: int = 1):
@@ -51,7 +51,7 @@ class PiQuizz:
 
         num = self.PI[self.pos]
         if num == user_input:
-            self.pos += 1
+            self.pos += self.jump
             if self.pos == self.limit:
                 self.end_func(True)
             else:
@@ -63,4 +63,5 @@ class PiQuizz:
             else:
                 return False
 
-        
+    def reset(self):
+        self = self.__init__(self.param, self.end_func)
