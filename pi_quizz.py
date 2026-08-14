@@ -54,10 +54,13 @@ class PiQuizz:
             self.pos += 1
             if self.pos == self.limit:
                 self.end_func(True)
-
+            else:
+                return True
         else:
             self.live -= 1
             if self.live == 0:
                 self.end_func(False)
+            else:
+                return False
 
         
