@@ -7,6 +7,7 @@ class Game(WidgetManager):
     def __init__(self, clear_window, go_to_menu_func, param: dict = {"type": "classic", "live": 3}):
         super().__init__(clear_window, (0, 0), (0, 0), None, None, "Game")
 
+        self.stuck_in_widget = True
         self.img_big = ""
         self.widgets = {
             (1, 0): Widget(clear_window, (29, 115), on_click_func=go_to_menu_func, small_path="ascii/Menu.txt", name="menu button"),
@@ -24,7 +25,7 @@ class Game(WidgetManager):
 
         # data for visual
         self.current_seq = "3."
-        self.digit_len = [12, 6, 11, 11, 13, 11, 11, 11, 11, 11]
+        self.digit_len = (12, 6, 11, 11, 13, 11, 11, 11, 11, 11)
         self.stop_loop = False
         self.won = False
 
@@ -36,9 +37,12 @@ class Game(WidgetManager):
         self.lost_img = ascii_loader("ascii/Lost.txt")
         self.end_img = (self.lost_img, self.gg_img)
 
+    def update_param(self, param):
+        self.param = param
+        self.Quizz.param = param
+
     def move(self, key:str):
         super().move(key)
-
         if key.isdigit() and not self.stop_loop:
             progressed = self.Quizz.input(key)
 

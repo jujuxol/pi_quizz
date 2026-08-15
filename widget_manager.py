@@ -6,12 +6,12 @@ from widget import Widget
 
 class WidgetManager(Widget):
 
-    def __init__(self, clear_window, small_pos=(0, 0), big_pos=(0, 0), big_path=None, small_path=None, name = ""):
+    def __init__(self, clear_window, small_pos=(0, 0), big_pos=(0, 0), big_path=None, small_path=None, name = "", perma_bg = False):
         name = str(self) if name == "" else name
         super().__init__(clear_window, small_pos, big_pos, big_path=big_path, small_path=small_path, name=name)
 
-
-        self.stuck_in_widget = True
+        self.perma_bg = perma_bg
+        self.stuck_in_widget = False
         self.cursor_pos = [0, 0]
 
         self.widgets = { # exemple
@@ -68,16 +68,17 @@ class WidgetManager(Widget):
                 self.stuck_in_widget = False
                 self.clear_window()
             elif key == " ":
+                self.clear_window()
                 self.widgets[tuple(self.cursor_pos)].clicked()
     
     def draw(self, window):
-        super().draw(window) # draw BG
+        if (not self.stuck_in_widget or (self.stuck_in_widget and not self.widgets[tuple(self.cursor_pos)].stuck_in_widget)) or self.perma_bg:
+            super().draw(window) # draw BG
 
         if self.stuck_in_widget: # selected
-
             # only draw interior of selected module
             if self.widgets[tuple(self.cursor_pos)].stuck_in_widget:
-                window.clear()
+                #window.clear()
                 self.widgets[tuple(self.cursor_pos)].draw(window)
             
             # draw all modules

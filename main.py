@@ -23,6 +23,10 @@ class Main:
     def start(self):
         self.window.clear()
         self.current_manager = self.Game
+
+        # load param
+        self.Game.update_param(self.Menu.get_param())
+
         self.Game.reset()
         self.Game.cursor_pos = [0, 0]
 
@@ -33,6 +37,10 @@ class Main:
     def event(self):
         try:
             key = self.window.getkey()
+
+            # non maj number translator
+            key = {"&": "1", "©": "2", "\"": "3", "\'": "4", "(": "5", "-": "6", "¨": "7", "_": "8", "§": "9", " ": "0"}.get(key, key)
+
             if key == "e":
                 return
 
@@ -41,6 +49,7 @@ class Main:
             if not self.current_manager.stuck_in_widget:
                 self.current_manager.stuck_in_widget = True
 
+            # self.window.addch(10, 10, key) # debug
             sleep(0.1)
         except:
             pass

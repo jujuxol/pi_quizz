@@ -4,10 +4,10 @@ class PiQuizz:
     """ objectif: class qui permet de gerer sans affichage plusieur mode de jeu en rapport avec les décimale de pi
     """
 
-    def __init__(self, param: dict = {"type": "classic", "live": 3}, end_func = lambda x: print(x)):
+    def __init__(self, param: dict = {"mode": "classic", "live": 3}, end_func = lambda x: print(x)):
         """ objectif: initialiser la classe en lui transmettant le type de partie et ses paramètre
         - param (dict): dictionnaire contenant toutes les info concernant la partie lancé, sous ce format =>
-        {type: ..., len: (..., ...), jump: ..., live: ..., time: ...}
+        {mode: ..., len: (..., ...), jump: ..., live: ..., time: ...}
         => si des clé ne sont pas présente, cela veut dire qu'elles n'ont pas d'importance
         
         - end_func (fonction avec soit True ou False): finction appelé en fin de  partie (True si victoire et False si échec)
@@ -22,6 +22,10 @@ class PiQuizz:
         self.limit = self.param.get("len", (0, None))[1]
         self.jump = self.param.get("jump", 1)
         self.live = self.param.get("live", 3)
+
+        if self.limit != None:
+            if self.pos >= self.limit:
+                self.pos = self.limit -1
 
     def get_previus_digits(self, num_of_digit: int = 1):
         """ objectif: renvoyer les digit précdent à celui que l'on devine en ce moment
