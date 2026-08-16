@@ -38,7 +38,7 @@ class Param(WidgetManager):
             (1, -5): Widget(clear_window, (0, 125), small_path="ascii/Right.txt", name="right gamemode select", on_click_func=lambda: self.change_mode(1)),
             (0, -4): InpputWidget(clear_window, "ascii/digit", digit_len, "²", "p", lambda x, y: x in "0123456789" and len(y) < 5, (0, 55), "ascii/Underscore.txt", "input limit"),
             (0, -3): InpputWidget(clear_window, "ascii/digit", digit_len, "²", "p", lambda x, y: x in "0123456789" and len(y) < 5, (0, 65), "ascii/Underscore.txt", "input start"),
-            (0, -2): InpputWidget(clear_window, "ascii/digit", digit_len, "²", "p", lambda x, y: x in "0123456789" and len(y) < 4, (0, 60), "ascii/Underscore.txt", "input jump"),
+            (0, -2): InpputWidget(clear_window, "ascii/digit", digit_len, "²", "p", lambda x, y: x in "0123456789" and len(y) < 3, (0, 60), "ascii/Underscore.txt", "input jump"),
             (0, -1): Widget(clear_window,(0, 50), small_path="ascii/Left.txt", name="left live select", on_click_func=lambda: self.change_live(-1)),
             (1, -1): Widget(clear_window, (0, 80), small_path="ascii/Right.txt", name="right live select", on_click_func=lambda: self.change_live(1)),
             (0, 0): Widget(clear_window, (29, 60), on_click_func=lambda: self.move("e"), small_path="ascii/Return.txt", name="return")

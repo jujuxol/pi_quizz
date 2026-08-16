@@ -49,7 +49,7 @@ class Main:
             if not self.current_manager.stuck_in_widget:
                 self.current_manager.stuck_in_widget = True
 
-            # self.window.addch(10, 10, key) # debug
+            #self.window.addch(10, 10, str(self.Game.Quizz.get_previus_digits(5))) # debug
             sleep(0.1)
         except:
             pass
@@ -68,23 +68,26 @@ class Main:
 
     def loop(self):
         while self.run:
-            # check if screen is too small to prevent crash
-            height, width = self.window.getmaxyx()
-            
-            if height < 34 or width < 110:
-                if not self.too_small:
-                    self.too_small = True
-                    self.window.clear()
-                self.window.addstr(0, 0, "Screen to small, dezoom the terminal")
-                self.window.refresh()
-            else:
-                if self.too_small:
-                    self.too_small = False
-                    self.window.clear()
+            try:
+                # check if screen is too small to prevent crash
+                height, width = self.window.getmaxyx()
                 
-                self.event()
-                #self.update()
-                self.draw()
+                if height < 34 or width < 110:
+                    if not self.too_small:
+                        self.too_small = True
+                        self.window.clear()
+                    self.window.addstr(0, 0, "Screen to small, dezoom the terminal")
+                    self.window.refresh()
+                else:
+                    if self.too_small:
+                        self.too_small = False
+                        self.window.clear()
+                    
+                    self.event()
+                    #self.update()
+                    self.draw()
+            except:
+                pass
 
 def main_init(window: curses.window):
     curses.noecho()

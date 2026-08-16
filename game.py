@@ -6,7 +6,6 @@ class Game(WidgetManager):
 
     def __init__(self, clear_window, go_to_menu_func, param: dict = {"type": "classic", "live": 3}):
         super().__init__(clear_window, (0, 0), (0, 0), None, None, "Game")
-
         self.stuck_in_widget = True
         self.img_big = ""
         self.widgets = {
@@ -28,6 +27,7 @@ class Game(WidgetManager):
         self.digit_len = (12, 6, 11, 11, 13, 11, 11, 11, 11, 11)
         self.stop_loop = False
         self.won = False
+        self.pi_to_show = 5
 
         #img loading:
         self.heart_img = ascii_loader("ascii/Heart.txt")
@@ -40,6 +40,7 @@ class Game(WidgetManager):
     def update_param(self, param):
         self.param = param
         self.Quizz.param = param
+        self.pi_to_show = 6 if param["mode"] == "geo" else 5
 
     def move(self, key:str):
         super().move(key)
@@ -47,8 +48,12 @@ class Game(WidgetManager):
             progressed = self.Quizz.input(key)
 
             if progressed:
-                self.current_seq += self.Quizz.get_previus_digits(1)
-                if len(self.current_seq) > 5:
+                if self.param["mode"] in ["classic", "training"]:
+                    self.current_seq += self.Quizz.get_previus_digits(self.param["jump"])[0]
+                elif self.param["mode"] == "geo":
+                    self.current_seq = self.Quizz.get_previus_digits(self.pi_to_show)
+
+                if len(self.current_seq) > self.pi_to_show:
                     self.current_seq = self.current_seq[1:]
             
             else:
@@ -61,8 +66,8 @@ class Game(WidgetManager):
 
     def additional_draw(self, window):
         # necessary reset
-        ascii_drawer(window, (15, 65), (" "*62 + "\n")*8)
-        ascii_drawer(window, (0, 75), (" "*14*len(str(self.Quizz.pos)) + "\n")*8)
+        ascii_drawer(window, (15, 65), (" "*(14*self.pi_to_show + 3) + "\n")*8)
+        ascii_drawer(window, (0, 75), (" "*14*len(str(self.Quizz.score)) + "\n")*8)
 
         # draw lives
         if not self.stop_loop:
@@ -71,8 +76,8 @@ class Game(WidgetManager):
 
         # draw "score"
         current_len = 0
-        for i in range(len(str(self.Quizz.pos))):
-            digit = int(str(self.Quizz.pos)[i])
+        for i in range(len(str(self.Quizz.score))):
+            digit = int(str(self.Quizz.score)[i])
             ascii_drawer(window, (0, 75 + current_len), self.digit_img[digit])
             current_len += self.digit_len[digit]
 
@@ -87,6 +92,15 @@ class Game(WidgetManager):
             else:
                 ascii_drawer(window, (15, 65 + current_len), self.digit_img[int(digit)])
                 current_len += self.digit_len[int(digit)]
+
+        # draw training help
+        if self.param["mode"] == "training":
+            current_len = 0
+            seq = self.Quizz.get_next_digits(2)
+            for i in range(len(str(seq))):
+                digit = int(str(seq)[i])
+                ascii_drawer(window, (0, 140 + current_len), self.digit_img[digit])
+                current_len += self.digit_len[digit]
 
         if self.stop_loop:
             ascii_drawer(window, (0, 3), self.end_img[int(self.won)])

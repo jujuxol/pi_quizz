@@ -1,13 +1,14 @@
+from random import randint
 
 
 class PiQuizz:
     """ objectif: class qui permet de gerer sans affichage plusieur mode de jeu en rapport avec les décimale de pi
     """
 
-    def __init__(self, param: dict = {"mode": "classic", "live": 3}, end_func = lambda x: print(x)):
+    def __init__(self, param: dict = {"mode": "classic", "live": 3}, end_func = lambda x: print(x), pi=0):
         """ objectif: initialiser la classe en lui transmettant le type de partie et ses paramètre
         - param (dict): dictionnaire contenant toutes les info concernant la partie lancé, sous ce format =>
-        {mode: ..., len: (..., ...), jump: ..., live: ..., time: ...}
+        {mode: ..., start: ..., limit: ..., jump: ..., live: ..., time: ...}
         => si des clé ne sont pas présente, cela veut dire qu'elles n'ont pas d'importance
         
         - end_func (fonction avec soit True ou False): finction appelé en fin de  partie (True si victoire et False si échec)
@@ -16,16 +17,49 @@ class PiQuizz:
         self.end_func = end_func
         self.param = param
 
-        self.PI = "1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679"
+        #self.PI = "1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679"
+        self.load_pi()
+        self.pi_chunk = 1
 
-        self.pos = self.param.get("len", [0])[0]
-        self.limit = self.param.get("len", (0, None))[1]
+        self.mode = param.get("mode", "classic")
+        self.start = self.param.get("start", 0)
+        self.limit = self.param.get("limit", 99998)
+        if self.limit == None:
+            self.limit = 99998
         self.jump = self.param.get("jump", 1)
         self.live = self.param.get("live", 3)
 
         if self.limit != None:
-            if self.pos >= self.limit:
-                self.pos = self.limit -1
+            if self.start >= self.limit:
+                self.start = self.limit -1
+        self.pos = self.start
+
+        self.replace_pi()
+
+        self.score = 0
+
+    def replace_pi(self):
+        while self.pos >= 3000:
+            self.pos -= 2000
+            self.pi_chunk += 1
+            self.PI = self.PI[2000:] + self.PI_seq[self.pi_chunk]
+
+    def load_pi(self):
+        self.PI_seq = [""]
+        count = 0
+        i = 0
+        with open("pi_digits.txt", "r") as f:
+            for line in f.readlines():
+                count += 1
+                self.PI_seq[i] += line[:-1]
+                if count == 40:
+                    i += 1
+                    count = 0
+                    self.PI_seq.append("")
+        self.PI = self.PI_seq[0] + self.PI_seq[1]
+
+    def get_next_digits(self, num_of_digit: int = 1):
+        return self.PI[self.pos : num_of_digit + self.pos : self.jump]
 
     def get_previus_digits(self, num_of_digit: int = 1):
         """ objectif: renvoyer les digit précdent à celui que l'on devine en ce moment
@@ -55,12 +89,26 @@ class PiQuizz:
 
         num = self.PI[self.pos]
         if num == user_input:
-            self.pos += self.jump
-            if self.pos == self.limit:
-                self.end_func(True)
-            else:
+            # depend on gamemode
+            if self.mode in ["classic", "training"]:
+                self.pos += self.jump
+                self.score += self.jump
+                self.replace_pi()
+                if self.limit != None:
+                    if self.pos >= self.limit:
+                        self.end_func(True)
+                    else:
+                        return True
+                else:
+                    return True
+
+            elif self.mode == "geo":
+                self.score += 1
+                self.pos = randint(self.start, self.limit)
+                self.replace_pi()
                 return True
-        else:
+
+        elif self.mode != "training":
             self.live -= 1
             if self.live == 0:
                 self.end_func(False)
